@@ -5,4 +5,4 @@ Esse player faz parte de um tutorial que estou fazendo no meu canal do youtube (
 ------------
 
 #### Demostração
-[![Playlist Completa](https://github.com/welson-rodrigues/foto-v-deo-player-3D/blob/a1e722d890b4d714b51f636809688ca714c6ba8b/hqdefault.jpg)]([https://youtu.be/cylU8U_gKmY?feature=shared "Playlist Completa")
+[![Playlist Completa](https://github.com/welson-rodrigues/foto-v-deo-player-3D/blob/a1e722d890b4d714b51f636809688ca714c6ba8b/hqdefault.jpg)](https://youtu.be/cylU8U_gKmY?feature=shared "Playlist Completa")
