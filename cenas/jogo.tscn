@@ -1,0 +1,108 @@
+[gd_scene load_steps=17 format=3 uid="uid://bu6coaei501d0"]
+
+[ext_resource type="Script" path="res://scripts/view.gd" id="1_60crw"]
+[ext_resource type="Script" path="res://scripts/player3D.gd" id="1_kqud2"]
+[ext_resource type="Texture2D" uid="uid://dw7ofsbfmojrp" path="res://icon.svg" id="2_wkmpx"]
+[ext_resource type="Texture2D" uid="uid://dj646rr2xw4du" path="res://scripts/Anime_equirectangular-jpg_ceu_azul_com_nuvens_908034557_10452884.jpg" id="3_mirye"]
+[ext_resource type="PackedScene" uid="uid://c4fba1hyqkstw" path="res://Models/personagens/models/gdbot/gdbot.glb" id="3_vucve"]
+[ext_resource type="Script" path="res://addons/virtual_joystick/scripts/virtual_joystick.gd" id="4_4p0mu"]
+[ext_resource type="PackedScene" uid="uid://b6h5wqncbjhoq" path="res://cart_2.tscn" id="6_4mmpk"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s2vee"]
+albedo_color = Color(0.486275, 1, 0.27451, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_p374o"]
+material = SubResource("StandardMaterial3D_s2vee")
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_knux6"]
+data = PackedVector3Array(1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0, -1, 1, 0, -1)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_g2em8"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5hrg3"]
+albedo_color = Color(0.781804, 0.111678, 0.184595, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_hgqdt"]
+material = SubResource("StandardMaterial3D_5hrg3")
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_ngedm"]
+panorama = ExtResource("3_mirye")
+
+[sub_resource type="Sky" id="Sky_cgujn"]
+sky_material = SubResource("PanoramaSkyMaterial_ngedm")
+
+[sub_resource type="Environment" id="Environment_b5pn1"]
+background_mode = 2
+sky = SubResource("Sky_cgujn")
+
+[node name="jogo" type="Node3D"]
+
+[node name="camera_trip" type="Node3D" parent="." node_paths=PackedStringArray("target")]
+script = ExtResource("1_60crw")
+target = NodePath("../player3D")
+min_rotacao_x = -30
+
+[node name="Camera" type="Camera3D" parent="camera_trip"]
+
+[node name="chao" type="MeshInstance3D" parent="."]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
+mesh = SubResource("PlaneMesh_p374o")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="chao"]
+
+[node name="colisao" type="CollisionShape3D" parent="chao/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_knux6")
+
+[node name="player3D" type="CharacterBody3D" parent="." node_paths=PackedStringArray("view")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.523999, 1.60972, -0.295737)
+script = ExtResource("1_kqud2")
+view = NodePath("../camera_trip")
+
+[node name="gdbot" parent="player3D" instance=ExtResource("3_vucve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.0355, 0)
+
+[node name="colisao" type="CollisionShape3D" parent="player3D"]
+shape = SubResource("CapsuleShape3D_g2em8")
+
+[node name="objeto_player" type="MeshInstance3D" parent="player3D"]
+visible = false
+mesh = SubResource("CapsuleMesh_hgqdt")
+skeleton = NodePath("../..")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_b5pn1")
+
+[node name="luz" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.998477, -0.0410225, 0.036886, -0.0338184, 0.0731129, 0.99675, -0.043586, -0.99648, 0.0716142, 0.141945, 9.00298, 0.162899)
+
+[node name="botao2" type="TouchScreenButton" parent="."]
+position = Vector2(1025, 264)
+texture_normal = ExtResource("2_wkmpx")
+texture_pressed = ExtResource("2_wkmpx")
+action = "zoom_in"
+
+[node name="botao1" type="TouchScreenButton" parent="."]
+visible = false
+position = Vector2(0, 264)
+texture_normal = ExtResource("2_wkmpx")
+texture_pressed = ExtResource("2_wkmpx")
+action = "zoom_out"
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VirtualJoystick" type="Node2D" parent="CanvasLayer/Control"]
+position = Vector2(128, 520)
+script = ExtResource("4_4p0mu")
+
+[node name="cart2" parent="." instance=ExtResource("6_4mmpk")]
+transform = Transform3D(1.40252, 0, 0, 0, 1, 0, 0, 0, 1.16781, 0, 0.749529, 2.97727)
+
+[connection signal="analogic_chage" from="CanvasLayer/Control/VirtualJoystick" to="player3D" method="_on_virtual_joystick_analogic_chage"]
